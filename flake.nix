@@ -10,6 +10,7 @@
   in {
     packages.x86_64-linux.nix = (packages "x86_64-linux").nix;
     packages.x86_64-linux.nixBinaryTarball = (packages "x86_64-linux").nixBinaryTarball;
+    packages.x86_64-linux.nixBinaryTarballCrossAarch64 = (packages "x86_64-linux").pkgsCross.aarch64-multiplatform.nixBinaryTarball;
 
     overlays.default = final: prev: with prev; let
       # copied from nix/flake.nix
