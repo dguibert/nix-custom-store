@@ -5,9 +5,11 @@
   inputs.nix.inputs.nixpkgs.follows = "nixpkgs";
   inputs.nixpkgs.url = "github:NixOS/nixpkgs/master";
 
-  outputs = { self, nix, nixpkgs }: {
-    packages.x86_64-linux.nix = (nixpkgs.legacyPackages.x86_64-linux.appendOverlays [self.overlays.default]).nix;
-    packages.x86_64-linux.nixBinaryTarball = (nixpkgs.legacyPackages.x86_64-linux.appendOverlays [self.overlays.default]).nixBinaryTarball;
+  outputs = { self, nix, nixpkgs }: let
+    packages = system: nixpkgs.legacyPackages.${system}.appendOverlays [self.overlays.default];
+  in {
+    packages.x86_64-linux.nix = (packages "x86_64-linux").nix;
+    packages.x86_64-linux.nixBinaryTarball = (packages "x86_64-linux").nixBinaryTarball;
 
     overlays.default = final: prev: with prev; let
       # copied from nix/flake.nix
