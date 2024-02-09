@@ -16,6 +16,7 @@ You use in in a flake as
     outputs = { self, nixpkgs, nix-custom-store, ...}@inputs: 
     let
     packages = system: nixpkgs.legacyPackages.${system}.appendOverlays [
+      nix-custom-store.overlays.default
       self.overlays.default
     ];
     in {
