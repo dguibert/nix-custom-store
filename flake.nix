@@ -8,6 +8,8 @@
   outputs = { self, nix, nixpkgs }: let
     packages = system: nixpkgs.legacyPackages.${system}.appendOverlays [self.overlays.default];
   in {
+    packages.x86_64-linux.default = self.packages.x86_64-linux.nix;
+
     packages.x86_64-linux.nix = (packages "x86_64-linux").nix;
     packages.x86_64-linux.nixBinaryTarball = (packages "x86_64-linux").nixBinaryTarball;
     packages.x86_64-linux.nixBinaryTarballCrossAarch64 = (packages "x86_64-linux").pkgsCross.aarch64-multiplatform.nixBinaryTarball;
