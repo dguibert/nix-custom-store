@@ -33,7 +33,7 @@
             substitute ${nix.src}/scripts/install-nix-from-closure.sh $TMPDIR/install \
               --subst-var-by nix ${nix} \
               --subst-var-by cacert ${cacert}
-              sed -i -e 's|^dest=".*|dest="${nixStore}"|' $TMPDIR/install
+              sed -i -e 's|^dest=".*|dest="${builtins.dirOf builtins.storeDir}"|' $TMPDIR/install
 
             substitute ${nix.src}/scripts/install-darwin-multi-user.sh $TMPDIR/install-darwin-multi-user.sh \
               --subst-var-by nix ${nix} \
@@ -92,15 +92,13 @@
           '';
 
     in {
-      nixStore = builtins.trace "nixStore=/nix" "/nix";
-
       nix = prev.nix.overrideAttrs (o: {
         configureFlags = o.configureFlags
-        ++ (lib.optionals (final.nixStore == "/nix") [ "--sysconfdir=/etc" ])
-        ++ (lib.optionals (final.nixStore != "/nix") [
-          "--with-store-dir=${final.nixStore}/store"
-          "--localstatedir=${final.nixStore}/var"
-          "--sysconfdir=${final.nixStore}/etc" ]);
+        ++ (lib.optionals (builtins.storeDir == "/nix/store") [ "--sysconfdir=/etc" ])
+        ++ (lib.optionals (builtins.storeDir != "/nix/store") [
+          "--with-store-dir=${builtins.dirOf builtins.storeDir}/store"
+          "--localstatedir=${builtins.dirOf builtins.storeDir}/var"
+          "--sysconfdir=${builtins.dirOf builtins.storeDir}/etc" ]);
       });
 
       nixBinaryTarball = binaryTarball final.nix final.pkgs;
