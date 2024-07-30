@@ -3,15 +3,35 @@ on:
   pull_request:
   push:
 jobs:
-  tests:
+  flake-checker:
     runs-on: ubuntu-latest
-    permissions:
-      id-token: "write"
-      contents: "read"
     steps:
       - uses: actions/checkout@v4
       - uses: DeterminateSystems/nix-installer-action@main
       - uses: DeterminateSystems/magic-nix-cache-action@main
       - uses: DeterminateSystems/flake-checker-action@main
-      - name: Run `nix build`
-        run: nix build -L .
+
+  nix-matrix:
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.set-matrix.outputs.matrix }}
+    steps:
+      - uses: actions/checkout@main
+      - uses: DeterminateSystems/nix-installer-action@main
+      - id: set-matrix
+        name: Generate Nix Matrix
+        run: |
+          set -Eeu
+          matrix="$(nix eval --json '.#githubActions.matrix')"
+          echo "matrix=$matrix" >> "$GITHUB_OUTPUT"
+
+  nix-build:
+    needs: nix-matrix
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix: ${{fromJSON(needs.nix-matrix.outputs.matrix)}}
+    steps:
+      - uses: actions/checkout@main
+      - uses: DeterminateSystems/nix-installer-action@main
+      - uses: DeterminateSystems/magic-nix-cache-action@main
+      - run: nix build -L '.#${{ matrix.attr }}'

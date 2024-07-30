@@ -112,13 +112,33 @@
         "type": "github"
       }
     },
+    "nix-github-actions": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1720066371,
+        "narHash": "sha256-uPlLYH2S0ACj0IcgaK9Lsf4spmJoGejR9DotXiXSBZQ=",
+        "owner": "nix-community",
+        "repo": "nix-github-actions",
+        "rev": "622f829f5fe69310a866c8a6cd07e747c44ef820",
+        "type": "github"
+      },
+      "original": {
+        "owner": "nix-community",
+        "repo": "nix-github-actions",
+        "type": "github"
+      }
+    },
     "nixpkgs": {
       "locked": {
-        "lastModified": 1722325294,
-        "narHash": "sha256-NQ/w3jB343k8EzUAN/3/+4E4OaFs5mHcfAMlmdMG3OM=",
+        "lastModified": 1722327180,
+        "narHash": "sha256-RVfg6hqnr48TBKemhrAXlBEVKlVmI51agTPDWwy6AXg=",
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "49f24abc0a89aee935a41b9c98dd8e27cd6bd725",
+        "rev": "9b9746eddab9a8ebc0ba3e8c1d119a6d938f0809",
         "type": "github"
       },
       "original": {
@@ -163,6 +183,7 @@
     "root": {
       "inputs": {
         "nix": "nix",
+        "nix-github-actions": "nix-github-actions",
         "nixpkgs": "nixpkgs"
       }
     }

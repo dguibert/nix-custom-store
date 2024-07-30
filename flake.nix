@@ -5,9 +5,17 @@
   inputs.nix.inputs.nixpkgs.follows = "nixpkgs";
   inputs.nixpkgs.url = "github:NixOS/nixpkgs/master";
 
-  outputs = { self, nix, nixpkgs }: let
+  inputs.nix-github-actions.url = "github:nix-community/nix-github-actions";
+  inputs.nix-github-actions.inputs.nixpkgs.follows = "nixpkgs";
+
+  outputs = { self, nix, nixpkgs, ... }@inputs: let
     packages = system: nixpkgs.legacyPackages.${system}.appendOverlays [self.overlays.default];
   in {
+    githubActions = inputs.nix-github-actions.lib.mkGithubMatrix { inherit (self) checks; };
+    checks.x86_64-linux.nix = self.packages.x86_64-linux.nix;
+    checks.x86_64-linux.nixBinaryTarball = self.packages.x86_64-linux.nixBinaryTarball;
+    checks.x86_64-linux.nixBinaryTarballCrossAarch64 = self.packages.x86_64-linux.nixBinaryTarballCrossAarch64;
+
     packages.x86_64-linux.default = self.packages.x86_64-linux.nix;
 
     packages.x86_64-linux.nix = (packages "x86_64-linux").nix;
@@ -19,7 +27,7 @@
       binaryTarball = nix: pkgs:
         let
           inherit (pkgs) buildPackages;
-          inherit (pkgs) cacert nixStore;
+          inherit (pkgs) cacert;
           installerClosureInfo = buildPackages.closureInfo { rootPaths = [ nix cacert ]; };
         in
 
